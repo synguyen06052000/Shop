@@ -1768,7 +1768,7 @@ textarea:focus {
 .hb-menu nav > ul > li:hover > a::after {
 		color: #ffffff;
 }
-.hb-menu nav > ul > li > a::after {
+/* .hb-menu nav > ul > li > a::after {
 	content: "\f107";	
 	position: absolute;
 	top: 8px;
@@ -1777,7 +1777,7 @@ textarea:focus {
 	font-size: 18px;
 	transition: all 0.3s ease-in-out;
 	color: #242424;
-}
+} */
 .hb-menu nav > ul > li:nth-child(n+5) > a::after,
 .hb-menu nav > ul > li:nth-child(1) > a::after,
 .hb-menu nav > ul > li:nth-child(2) > a::after
@@ -1928,10 +1928,10 @@ textarea:focus {
 .megamenu-static-holder .hb-megamenu > li:first-child {
 	padding-left: 10px;
 }
-.hb-menu nav > ul > .megamenu-static-holder > a::after {
+/* .hb-menu nav > ul > .megamenu-static-holder > a::after {
 	position: static;
 	margin: -1px 0 0 10px;
-}
+} */
 /*Sticky*/
 .header-sticky.sticky {
 	background: rgba(254,215,0,.8);

@@ -38,14 +38,14 @@ def login():
         users = User.query.all();
         print(users)
         if len(users) == 0:
-            return render_template("login-register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
+            return render_template("login_register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
         for user in users:
             if(user.email == email and user.password == password):
                 return 'Login successful'
             else:
-                return render_template("login-register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
+                return render_template("login_register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
     else:
-        return render_template("login-register.html")
+        return render_template("login_register.html")
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -63,9 +63,9 @@ def register():
             password = password)
         db.session.add(user)
         db.session.commit()
-        return render_template("login-register.html")
+        return render_template("login_register.html")
     else:
-        return render_template("login-register.html")
+        return render_template("login_register.html")
     
 @app.route("/", methods=['GET'])
 def home():
@@ -73,9 +73,21 @@ def home():
 
 @app.route("/shop", methods=['GET'])
 def shop():
-    return render_template("shop-left-sidebar.html")
+    return render_template("shop.html")
+
+@app.route("/about-us", methods=['GET'])
+def about_us():
+    return render_template("about-us.html")
+
+@app.route("/contact", methods=['GET'])
+def contact():
+    return render_template("contact.html")
+
+@app.route("/blog", methods=['GET'])
+def blog():
+    return render_template("blog.html")
 
 
 if __name__ == '__main__':
     create_db(app)
-    app.run(debug=True, port=5500)
+    app.run(debug=True, port=5000)
