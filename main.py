@@ -37,7 +37,7 @@ class User(db.Model):
     
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    idUser = db.Column(db.Integer, nullable=False)
+    idBlog = db.Column(db.Integer, nullable=False, default=1)
     idCommenter = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String(10000), nullable=False)
     create_at = db.Column(db.DateTime(timezone=True),
@@ -112,7 +112,32 @@ def blog():
 
 @app.route("/blog-detail", methods=['GET'])
 def blog_detail():
-    return render_template("blog-details.html")
+    currentBlog = 1 #Get currentBlog to get all comment in this blog
+    user = User.query.all()
+    comments = Comment.query.all()
+    commentByUser = {}
+    listComment = []
+    for comment in comments:
+        if comment.idBlog == currentBlog:
+            commentByUser['name'] = user[comment.idCommenter-1].firstName
+            commentByUser['userId'] = comment.idCommenter
+            commentByUser['text'] = comment.comment
+            commentByUser['createAt'] = comment.create_at
+            listComment.append(commentByUser)
+    return render_template("blog-details.html", listComment=listComment)
+
+@app.route("/blog-detail/comment/", methods=['POST'])
+def add_comment():
+    if 'username' in session:
+        comment_text = request.form.get("comment")
+        userId = session.get('userId')
+        if comment_text:
+            new_comment = Comment(idCommenter=userId, comment=comment_text)
+            db.session.add(new_comment)
+            db.session.commit()
+        return redirect(url_for('blog_detail'))
+    else:
+        return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
