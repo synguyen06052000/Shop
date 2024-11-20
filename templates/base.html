@@ -231,7 +231,11 @@
                                                 <ul class="ht-setting-list">
                                                     <li><a href="login-register.html">My Account</a></li>
                                                     <li><a href="checkout.html">Checkout</a></li>
-                                                    <li><a href="/login">Sign In</a></li>
+                                                    {% if session['username'] %}
+                                                        <li><a href="/logout">Logout</a></li>
+                                                    {% else %}
+                                                        <li><a href="/login">Sign In</a></li>
+                                                    {% endif %}
                                                 </ul>
                                             </div>
                                         </li>
@@ -275,7 +279,7 @@
                             <!-- Begin Header Logo Area -->
                             <div class="col-lg-3">
                                 <div class="logo pb-sm-30 pb-xs-30">
-                                    <a href="index.html">
+                                    <a href="/">
                                         <img src="{{ url_for('static', filename='css/images/menu/logo/1.jpg') }}" alt="">
                                     </a>
                                 </div>

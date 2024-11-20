@@ -1,6 +1,9 @@
 import os
 from flask import Flask, render_template, request, url_for, redirect
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
+from flask_session import Session
+from flask import session
 from sqlalchemy.sql import func
 
 baseDir = os.path.abspath(os.path.dirname(__file__))
@@ -11,8 +14,13 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 app.config['SQLALCHEMY_DATABASE_URI'] =\
         'sqlite:///' + dirDatabase
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = "b9ZHtEpIeiKHuM9"
+app.config['SESSION_TYPE'] = "filesystem"
 
 db = SQLAlchemy(app)
+Session(app)
+
+
 def create_db(app):
     if not os.path.exists(dirDatabase):
         with app.app_context():
@@ -27,6 +35,14 @@ class User(db.Model):
     create_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    idUser = db.Column(db.Integer, nullable=False)
+    idCommenter = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.String(10000), nullable=False)
+    create_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    
 
 # route
 @app.route("/login", methods=['GET', 'POST'])
@@ -34,16 +50,15 @@ def login():
     if request.method == 'POST':
         email = request.form.get("email_login")
         password = request.form.get("password_login")
-        print('----------Login with account------------','Username: ', email, 'Password: ', password)
-        users = User.query.all();
-        print(users)
-        if len(users) == 0:
-            return render_template("login_register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
+        users = User.query.all()
         for user in users:
-            if(user.email == email and user.password == password):
-                return 'Login successful'
-            else:
-                return render_template("login_register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
+            print(user.password, check_password_hash(user.password,password))
+            if(user.email == email and check_password_hash(user.password, password)):
+                session['userId'] = user.id
+                session['username'] = user.lastName + ' ' + user.firstName
+                session['email'] = user.email
+                return redirect(url_for('home'))
+        return render_template("login_register.html", errorMessage = 'Tài khoản / Mật khẩu không chính xác') 
     else:
         return render_template("login_register.html")
 @app.route("/register", methods=['GET', 'POST'])
@@ -57,6 +72,7 @@ def register():
         if password != confirmPass:
             return render_template("login-register.html", errorMessage2 = 'Mật khẩu không trùng khớp') 
         else:
+            password = generate_password_hash(password)
             user = User(firstName = firstName,
             lastName = lastName,
             email = userName,
@@ -75,6 +91,13 @@ def home():
 def shop():
     return render_template("shop.html")
 
+@app.route("/logout", methods=['GET'])
+def logout():
+    session.pop('userId', None)
+    session.pop('username', None)
+    session.pop('email', None)
+    return redirect(url_for('home'))
+
 @app.route("/about-us", methods=['GET'])
 def about_us():
     return render_template("about-us.html")
@@ -86,6 +109,10 @@ def contact():
 @app.route("/blog", methods=['GET'])
 def blog():
     return render_template("blog.html")
+
+@app.route("/blog-detail", methods=['GET'])
+def blog_detail():
+    return render_template("blog-details.html")
 
 
 if __name__ == '__main__':
