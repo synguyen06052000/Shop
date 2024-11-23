@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
@@ -22,15 +22,15 @@ Session(app)
 
 
 def create_db(app):
-    if not os.path.exists(dirDatabase):
-        with app.app_context():
-            db.create_all()
+    with app.app_context():
+        db.create_all()
+        #create_Product_Mock()
         print("Created db!")
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(100), nullable=False)
     lastName = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     create_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
@@ -43,6 +43,26 @@ class Comment(db.Model):
     create_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
     
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String(10000), nullable=False)
+    name = db.Column(db.String(10000), nullable=False)
+    new = new = db.Column(db.Boolean, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    saleTime = db.Column(db.Integer, nullable=False)
+    rate = db.Column(db.Integer, nullable=False)
+    percentSale = db.Column(db.Integer, nullable=False)
+    dimension = db.Column(db.String(10000), nullable=False)
+
+
+
+def create_Product_Mock():
+    product_1 = Product(category="Graphic Corner", name="Accusantium Dolorem1", new=True, price=46.80, saleTime=0, rate=3, percentSale=0, dimension="40x60")
+    product_2 = Product(category="Studio Design", name="Mug Today Is A Good Day", new=True, price=71.80, saleTime=0, rate=3, percentSale=7, dimension="40x60")
+    db.session.add(product_1)
+    db.session.add(product_2)
+    db.session.commit()
+
 
 # route
 @app.route("/login", methods=['GET', 'POST'])
@@ -85,7 +105,25 @@ def register():
     
 @app.route("/", methods=['GET'])
 def home():
-    return render_template("index.html")
+    products = Product.query.all()
+    hotDealProducts = []
+    laptops = []
+    tvs = []
+    for i in range(0, 4):
+        hotDealProducts.append(products[i])
+    for i in range(0, 6):
+        laptops.append(products[i])
+    for i in range(0, 6):
+        tvs.append(products[i])
+    return render_template("index.html", hotDealProducts=hotDealProducts, laptops=laptops, tvs=tvs)
+
+@app.route("/single-product", methods=['GET'])
+def single_product():
+    return render_template("single-product.html")
+
+@app.route("/shopping-cart", methods=['GET'])
+def shopping_cart():
+    return render_template("shopping-cart.html")
 
 @app.route("/shop", methods=['GET'])
 def shop():
@@ -113,18 +151,19 @@ def blog():
 @app.route("/blog-detail", methods=['GET'])
 def blog_detail():
     currentBlog = 1 #Get currentBlog to get all comment in this blog
-    user = User.query.all()
     comments = Comment.query.all()
-    commentByUser = {}
     listComment = []
     for comment in comments:
         if comment.idBlog == currentBlog:
-            commentByUser['name'] = user[comment.idCommenter-1].firstName
+            commentByUser = {}
+            user = User.query.get_or_404(comment.idCommenter)
+            print("Get user from comment", user.id)
+            commentByUser['name'] = user.firstName + " " + user.lastName
             commentByUser['userId'] = comment.idCommenter
             commentByUser['text'] = comment.comment
             commentByUser['createAt'] = comment.create_at
             listComment.append(commentByUser)
-    return render_template("blog-details.html", listComment=listComment)
+    return render_template("blog-details.html", listComment=listComment, commentSize=len(comments))
 
 @app.route("/blog-detail/comment/", methods=['POST'])
 def add_comment():
@@ -139,6 +178,25 @@ def add_comment():
     else:
         return redirect(url_for('login'))
 
+@app.route("/add_to_cart/<int:product_id>", methods=['POST', 'GET'])
+def add_to_cart(product_id):
+    print("Thêm vào giỏ hàng", product_id)
+    
+    if request.method == 'POST':
+        print("Hello World!")
+    if 'cart' not in session:
+        session['cart'] = []
+    
+    session['cart'].append(product_id)
+    session.modified = True
+    #return make_response('', 204)
+    return redirect(url_for('home'))
+
+
+# Admin
+@app.route("/admin", methods=['GET'])
+def admin_home():
+    return render_template("admin_index.html")
 
 if __name__ == '__main__':
     create_db(app)
