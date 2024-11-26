@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 from flask import session
 from sqlalchemy.sql import func
+from werkzeug.utils import secure_filename
+import imgbbpy, random, shutil
 
 baseDir = os.path.abspath(os.path.dirname(__file__))
 dirDatabase = os.path.join(baseDir, 'database.db')
@@ -21,11 +23,14 @@ db = SQLAlchemy(app)
 Session(app)
 
 
+def randomIdImage():
+    return random.randint(1000, 9999)
+
 def create_db(app):
     with app.app_context():
         db.create_all()
-        #create_Product_Mock()
         print("Created db!")
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(100), nullable=False)
@@ -53,16 +58,74 @@ class Product(db.Model):
     rate = db.Column(db.Integer, nullable=False)
     percentSale = db.Column(db.Integer, nullable=False)
     dimension = db.Column(db.String(10000), nullable=False)
+    img = db.Column(db.String(10000), nullable=False)
 
 
-
-def create_Product_Mock():
-    product_1 = Product(category="Graphic Corner", name="Accusantium Dolorem1", new=True, price=46.80, saleTime=0, rate=3, percentSale=0, dimension="40x60")
-    product_2 = Product(category="Studio Design", name="Mug Today Is A Good Day", new=True, price=71.80, saleTime=0, rate=3, percentSale=7, dimension="40x60")
-    db.session.add(product_1)
-    db.session.add(product_2)
+@app.route("/delete_product/<int:product_id>")
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
     db.session.commit()
+    #return redirect(url_for('home'))
 
+@app.route("/update_product/<int:product_id>", methods=['GET', 'POST'])
+def update_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    if request.method == 'POST':
+        productCategory = request.form.get("productCategory")
+        productName = request.form.get("productName")
+        productPrice = float(request.form.get("productPrice"))
+        productSaleTime = int(request.form.get("productSaleTime"))
+        productRate = int(request.form.get("productRate"))
+        productPercentSale = int(request.form.get("productPercentSale"))
+        productDimension = request.form.get("productDimension")
+        
+        product.category = productCategory
+        product.name = productName
+        product.price = productPrice
+        product.saleTime = productSaleTime
+        product.rate = productRate
+        product.percentSale = productPercentSale
+        product.dimension = productDimension
+        
+        db.session.add(product)
+        db.session.commit()
+
+@app.route("/add_product", methods=['GET', 'POST'])  
+def add_product():
+    client = imgbbpy.SyncClient('ffbdad501d7316f58281c592a65a955f')
+    if request.method == 'POST':
+        productCategory = request.form.get("productCategory")
+        productName = request.form.get("productName")
+        productPrice = float(request.form.get("productPrice"))
+        productSaleTime = int(request.form.get("productSaleTime"))
+        productRate = int(request.form.get("productRate"))
+        productPercentSale = int(request.form.get("productPercentSale"))
+        productDimension = request.form.get("productDimension")
+        img = request.files["productImage"]
+        
+        directory_img = str(randomIdImage())
+        path = os.path.join('backend','static', 'ImageToUpload', directory_img)
+        os.makedirs(path)
+        fileName = secure_filename(img.filename) #Mã hóa tên file
+        img.save(os.path.join(path, fileName)) #Lưu file vào local
+        imageCloud = client.upload(file=os.path.join(path, fileName))
+        shutil.rmtree(path, ignore_errors=True)
+        
+        product = Product(category=productCategory,
+                          name=productName, 
+                          new=True, 
+                          price=float(productPrice), 
+                          saleTime=productSaleTime, 
+                          rate=productRate, 
+                          percentSale=productPercentSale, 
+                          dimension=productDimension, 
+                          img=imageCloud.url)
+        db.session.add(product)
+        db.session.commit()
+        return redirect(url_for('home'))
+        
+    return render_template("add_product.html")
 
 # route
 @app.route("/login", methods=['GET', 'POST'])
@@ -109,12 +172,12 @@ def home():
     hotDealProducts = []
     laptops = []
     tvs = []
-    for i in range(0, 4):
-        hotDealProducts.append(products[i])
-    for i in range(0, 6):
-        laptops.append(products[i])
-    for i in range(0, 6):
-        tvs.append(products[i])
+    hotDealCount = min(len(products), 4)
+    laptopTvCount = min(len(products), 6)
+    
+    hotDealProducts = products[:hotDealCount]
+    laptops = products[:laptopTvCount]
+    tvs = products[:laptopTvCount]
     return render_template("index.html", hotDealProducts=hotDealProducts, laptops=laptops, tvs=tvs)
 
 @app.route("/single-product", methods=['GET'])
@@ -196,7 +259,19 @@ def add_to_cart(product_id):
 # Admin
 @app.route("/admin", methods=['GET'])
 def admin_home():
-    return render_template("admin_index.html")
+    return render_template("base_admin.html")
+
+@app.route("/admin_manager_user", methods=['GET'])
+def admin_manager_user():
+    return render_template("admin_manager_user.html")
+
+@app.route("/admin_manager_product", methods=['GET'])
+def admin_manager_product():
+    return render_template("admin_manager_product.html")
+
+@app.route("/admin_manager_order", methods=['GET'])
+def admin_manager_order():
+    return render_template("admin_manager_order.html")
 
 if __name__ == '__main__':
     create_db(app)

@@ -1,0 +1,52 @@
+{% extends "base_admin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Danh Sách Sản Phẩm</h2>
+    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addProductModal">Thêm Sản Phẩm Mới</button>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Giá</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody id="productTableBody">
+            <!-- Dữ liệu sản phẩm sẽ được thêm vào đây -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal thêm sản phẩm -->
+<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addProductModalLabel">Thêm Sản Phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addProductForm">
+                    <div class="form-group">
+                        <label for="productId">ID Sản Phẩm</label>
+                        <input type="text" class="form-control" id="productId" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Tên Sản Phẩm</label>
+                        <input type="text" class="form-control" id="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Giá Sản Phẩm</label>
+                        <input type="number" class="form-control" id="productPrice" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Thêm</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

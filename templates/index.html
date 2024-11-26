@@ -241,7 +241,7 @@
                                 <div class="single-product-wrap">
                                     <div class="product-image">
                                         <a href="{{url_for('single_product')}}">
-                                            <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                            <img src="{{hotDealProduct.img}}" alt="Li's Product Image">
                                         </a>
                                         <span class="sticker">New</span>
                                     </div>
@@ -273,7 +273,7 @@
                                         </div>
                                         <div class="add-actions">
                                             <ul class="add-actions-link">
-                                                <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                                <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=hotDealProduct.id) }}">Add to cart</a></li>
                                                 <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                                 <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                             </ul>
@@ -337,7 +337,7 @@
                             <div class="single-product-wrap">
                                 <div class="product-image">
                                     <a href="{{url_for('single_product')}}">
-                                        <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                        <img src="{{laptop.img}}" alt="Li's Product Image">
                                     </a>
                                     <span class="sticker">New</span>
                                 </div>
@@ -366,7 +366,7 @@
                                     </div>
                                     <div class="add-actions">
                                         <ul class="add-actions-link">
-                                            <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                            <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=laptop.id) }}">Add to cart</a></li>
                                             <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                             <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                         </ul>
@@ -430,7 +430,7 @@
                             <div class="single-product-wrap">
                                 <div class="product-image">
                                     <a href="{{url_for('single_product')}}">
-                                        <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                        <img src="{{tv.img}}" alt="Li's Product Image">
                                     </a>
                                     <span class="sticker">New</span>
                                 </div>
@@ -452,14 +452,14 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <h4><a class="product_name" href="{{url_for('single_product')}}">tv.name</a></h4>
+                                        <h4><a class="product_name" href="{{url_for('single_product')}}">{{ tv.name }}</a></h4>
                                         <div class="price-box">
                                             <span class="new-price">${{tv.price}}</span>
                                         </div>
                                     </div>
                                     <div class="add-actions">
                                         <ul class="add-actions-link">
-                                            <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                            <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=tv.id) }}">Add to cart</a></li>
                                             <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                             <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                         </ul>
@@ -522,7 +522,7 @@
                             <div class="single-product-wrap">
                                 <div class="product-image">
                                     <a href="{{url_for('single_product')}}">
-                                        <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                        <img src="{{tv.img}}" alt="Li's Product Image">
                                     </a>
                                     <span class="sticker">New</span>
                                 </div>
@@ -544,14 +544,14 @@
                                                 </ul>
                                             </div>
                                         </div>
-                                        <h4><a class="product_name" href="{{url_for('single_product')}}">tv.name</a></h4>
+                                        <h4><a class="product_name" href="{{url_for('single_product')}}">{{ tv.name }}</a></h4>
                                         <div class="price-box">
                                             <span class="new-price">${{tv.price}}</span>
                                         </div>
                                     </div>
                                     <div class="add-actions">
                                         <ul class="add-actions-link">
-                                            <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                            <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=tv.id) }}">Add to cart</a></li>
                                             <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                             <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                         </ul>
@@ -623,7 +623,7 @@
                                         <div class="single-product-wrap">
                                             <div class="product-image">
                                                 <a href="{{url_for('single_product')}}">
-                                                    <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                                    <img src="{{tv.img}}" alt="Li's Product Image">
                                                 </a>
                                                 <span class="sticker">New</span>
                                             </div>
@@ -645,14 +645,14 @@
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <h4><a class="product_name" href="{{url_for('single_product')}}">tv.name</a></h4>
+                                                    <h4><a class="product_name" href="{{url_for('single_product')}}">{{ tv.name }}</a></h4>
                                                     <div class="price-box">
                                                         <span class="new-price">${{tv.price}}</span>
                                                     </div>
                                                 </div>
                                                 <div class="add-actions">
                                                     <ul class="add-actions-link">
-                                                        <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                                        <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=tv.id) }}">Add to cart</a></li>
                                                         <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                                         <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                                     </ul>
@@ -674,7 +674,7 @@
                                     <div class="single-product-wrap">
                                         <div class="product-image">
                                             <a href="{{url_for('single_product')}}">
-                                                <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                                <img src="{{tv.img}}" alt="Li's Product Image">
                                             </a>
                                             <span class="sticker">New</span>
                                         </div>
@@ -696,14 +696,14 @@
                                                         </ul>
                                                     </div>
                                                 </div>
-                                                <h4><a class="product_name" href="{{url_for('single_product')}}">tv.name</a></h4>
+                                                <h4><a class="product_name" href="{{url_for('single_product')}}">{{ tv.name }}</a></h4>
                                                 <div class="price-box">
                                                     <span class="new-price">${{tv.price}}</span>
                                                 </div>
                                             </div>
                                             <div class="add-actions">
                                                 <ul class="add-actions-link">
-                                                    <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                                    <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=tv.id) }}">Add to cart</a></li>
                                                     <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                                     <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                                 </ul>
@@ -725,7 +725,7 @@
                                         <div class="single-product-wrap">
                                             <div class="product-image">
                                                 <a href="{{url_for('single_product')}}">
-                                                    <img src="{{img_product_large_sz_1}}" alt="Li's Product Image">
+                                                    <img src="{{tv.img}}" alt="Li's Product Image">
                                                 </a>
                                                 <span class="sticker">New</span>
                                             </div>
@@ -747,14 +747,14 @@
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                    <h4><a class="product_name" href="{{url_for('single_product')}}">tv.name</a></h4>
+                                                    <h4><a class="product_name" href="{{url_for('single_product')}}">{{ tv.name }}</a></h4>
                                                     <div class="price-box">
                                                         <span class="new-price">${{tv.price}}</span>
                                                     </div>
                                                 </div>
                                                 <div class="add-actions">
                                                     <ul class="add-actions-link">
-                                                        <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=1) }}">Add to cart</a></li>
+                                                        <li class="add-cart active"><a href="{{ url_for('add_to_cart', product_id=tv.id) }}">Add to cart</a></li>
                                                         <li><a class="links-details" href="wishlist.html"><i class="fa fa-heart-o"></i></a></li>
                                                         <li><a href="#" title="quick view" class="quick-view-btn" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-eye"></i></a></li>
                                                     </ul>
