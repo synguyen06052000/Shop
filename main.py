@@ -68,65 +68,6 @@ def delete_product(product_id):
     db.session.commit()
     #return redirect(url_for('home'))
 
-@app.route("/update_product/<int:product_id>", methods=['GET', 'POST'])
-def update_product(product_id):
-    product = Product.query.get_or_404(product_id)
-    if request.method == 'POST':
-        productCategory = request.form.get("productCategory")
-        productName = request.form.get("productName")
-        productPrice = float(request.form.get("productPrice"))
-        productSaleTime = int(request.form.get("productSaleTime"))
-        productRate = int(request.form.get("productRate"))
-        productPercentSale = int(request.form.get("productPercentSale"))
-        productDimension = request.form.get("productDimension")
-        
-        product.category = productCategory
-        product.name = productName
-        product.price = productPrice
-        product.saleTime = productSaleTime
-        product.rate = productRate
-        product.percentSale = productPercentSale
-        product.dimension = productDimension
-        
-        db.session.add(product)
-        db.session.commit()
-
-@app.route("/add_product", methods=['GET', 'POST'])  
-def add_product():
-    client = imgbbpy.SyncClient('ffbdad501d7316f58281c592a65a955f')
-    if request.method == 'POST':
-        productCategory = request.form.get("productCategory")
-        productName = request.form.get("productName")
-        productPrice = float(request.form.get("productPrice"))
-        productSaleTime = int(request.form.get("productSaleTime"))
-        productRate = int(request.form.get("productRate"))
-        productPercentSale = int(request.form.get("productPercentSale"))
-        productDimension = request.form.get("productDimension")
-        img = request.files["productImage"]
-        
-        directory_img = str(randomIdImage())
-        path = os.path.join('backend','static', 'ImageToUpload', directory_img)
-        os.makedirs(path)
-        fileName = secure_filename(img.filename) #Mã hóa tên file
-        img.save(os.path.join(path, fileName)) #Lưu file vào local
-        imageCloud = client.upload(file=os.path.join(path, fileName))
-        shutil.rmtree(path, ignore_errors=True)
-        
-        product = Product(category=productCategory,
-                          name=productName, 
-                          new=True, 
-                          price=float(productPrice), 
-                          saleTime=productSaleTime, 
-                          rate=productRate, 
-                          percentSale=productPercentSale, 
-                          dimension=productDimension, 
-                          img=imageCloud.url)
-        db.session.add(product)
-        db.session.commit()
-        return redirect(url_for('home'))
-        
-    return render_template("add_product.html")
-
 # route
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -261,13 +202,108 @@ def add_to_cart(product_id):
 def admin_home():
     return render_template("base_admin.html")
 
+@app.route("/update_info_user/<int:user_id>", methods=['GET', 'POST'])
+def admin_update_info_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        user_firstName = request.form.get('firstName')
+        user_lastName = request.form.get('lastName')
+        user_email = request.form.get('email')
+        
+        user.firstName = user_firstName
+        user.lastName = user_lastName
+        user.email = user_email
+        
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('admin_manager_user'))
+    
+    return render_template("base_admin.html")
+
+@app.route("/delete_user/<int:user_id>")
+def admin_delete_user(user_id):
+    user = User.query.get_or_404(user_id)      
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('admin_manager_user'))
+
 @app.route("/admin_manager_user", methods=['GET'])
 def admin_manager_user():
-    return render_template("admin_manager_user.html")
+    users = User.query.all()
+    return render_template("admin_manager_user.html", users=users)
 
 @app.route("/admin_manager_product", methods=['GET'])
 def admin_manager_product():
-    return render_template("admin_manager_product.html")
+    products = Product.query.all()
+    return render_template("admin_manager_product.html", products=products)
+
+@app.route("/add_product", methods=['GET', 'POST'])  
+def add_product():
+    client = imgbbpy.SyncClient('ffbdad501d7316f58281c592a65a955f')
+    if request.method == 'POST':
+        productCategory = request.form.get("productCategory")
+        productName = request.form.get("productName")
+        productPrice = float(request.form.get("productPrice"))
+        productSaleTime = int(request.form.get("productSaleTime"))
+        productRate = int(request.form.get("productRate"))
+        productPercentSale = int(request.form.get("productPercentSale"))
+        productDimension = request.form.get("productDimension")
+        img = request.files["productImage"]
+        
+        directory_img = str(randomIdImage())
+        path = os.path.join('backend','static', 'ImageToUpload', directory_img)
+        os.makedirs(path)
+        fileName = secure_filename(img.filename) #Mã hóa tên file
+        img.save(os.path.join(path, fileName)) #Lưu file vào local
+        imageCloud = client.upload(file=os.path.join(path, fileName))
+        shutil.rmtree(path, ignore_errors=True)
+        
+        product = Product(category=productCategory,
+                          name=productName, 
+                          new=True, 
+                          price=float(productPrice), 
+                          saleTime=productSaleTime, 
+                          rate=productRate, 
+                          percentSale=productPercentSale, 
+                          dimension=productDimension, 
+                          img=imageCloud.url)
+        db.session.add(product)
+        db.session.commit()
+        return redirect(url_for('home'))
+        
+    return render_template("add_product.html")
+
+@app.route("/update_product/<int:product_id>", methods=['GET', 'POST'])
+def update_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    if request.method == 'POST':
+        productCategory = request.form.get("productCategory")
+        productName = request.form.get("productName")
+        productPrice = float(request.form.get("productPrice"))
+        productSaleTime = int(request.form.get("productSaleTime"))
+        productRate = int(request.form.get("productRate"))
+        productPercentSale = int(request.form.get("productPercentSale"))
+        productDimension = request.form.get("productDimension")
+        
+        product.category = productCategory
+        product.name = productName
+        product.price = productPrice
+        product.saleTime = productSaleTime
+        product.rate = productRate
+        product.percentSale = productPercentSale
+        product.dimension = productDimension
+        
+        db.session.add(product)
+        db.session.commit()
+        return redirect(url_for('admin_manager_product'))
+    return redirect(url_for('admin_home'))
+
+@app.route("/delete_product/<int:product_id>", methods=['GET'])
+def admin_delete_product(product_id):
+    products = Product.query.get_or_404(product_id)
+    db.session.delete(products)
+    db.session.commit()
+    return render_template("admin_manager_product.html", products=products)
 
 @app.route("/admin_manager_order", methods=['GET'])
 def admin_manager_order():

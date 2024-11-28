@@ -8,15 +8,107 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Danh mục</th>
                 <th>Tên Sản Phẩm</th>
+                <th>Hình ảnh</th>
                 <th>Giá</th>
+                <th>Thời gian khuyến mãi</th>
+                <th>Số sao đánh giá</th>
+                <th>Phần trăm khuyến mãi</th>
+                <th>Kích thước</th>
                 <th>Hành Động</th>
             </tr>
         </thead>
         <tbody id="productTableBody">
-            <!-- Dữ liệu sản phẩm sẽ được thêm vào đây -->
+            <!-- Dữ liệu  -->
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.name }}</td>
+                    <td><img style="width:80px ; height:80px" src="{{ product.img }}" /></td>
+                    <td>{{ product.price }}$</td>
+                    <td>{{ product.saleTime }}</td>
+                    <td>{{ product.rate }}</td>
+                    <td>{{ product.percentSale }}</td>
+                    <td>{{ product.dimension }}</td>
+                    <td>
+                        <button class="btn btn-warning" data-target="#editProductModal" data-toggle="modal"
+                        product-id="{{product.id}}"
+                        product-category="{{product.category}}"
+                        product-name="{{product.name}}"
+                        product-img="{{product.img}}"
+                        product-price="{{product.price}}"
+                        product-saleTime="{{product.saleTime}}"
+                        product-rate="{{product.rate}}"
+                        product-percentSale="{{product.percentSale}}"
+                        product-dimension="{{product.dimension}}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
+</div>
+
+<!-- Modal chỉnh sửa thông tin sản phẩm -->
+<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProductModalLabel">Chỉnh Sửa Thông Tin Sản Phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editProductForm" method="POST">
+                    <div class="form-group">
+                        <label for="userId">ID Sản Phẩm</label>
+                        <input type="text" class="form-control" name="productId" id="productId" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Tên Danh Mục</label>
+                        <input type="text" class="form-control" id="productCategory" name="productCategory" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productName">Tên Sản Phẩm</label>
+                        <input type="text" class="form-control" id="productName" name="productName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Giá Sản Phẩm</label>
+                        <input type="number" class="form-control" id="productPrice" name="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productSaleTime">Thời gian khuyến mãi</label>
+                        <input type="text" class="form-control" id="productSaleTime" name="productSaleTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productRate">Số sao đánh giá</label>
+                        <input type="text" class="form-control" id="productRate" name="productRate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPercentSale">Phần trăm khuyến mãi</label>
+                        <input type="text" class="form-control" id="productPercentSale" name="productPercentSale" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDimension">Kích thước</label>
+                        <input type="text" class="form-control" id="productDimension" name="productDimension" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Hình Ảnh</label>
+                        <input type="file" id="productImage" name="productImage" accept=".jpg, .png" onchange="previewImage(event)">
+                        <img id="update-imagePreview" class="preview" alt="Preview Hình Ảnh" width="450px" height="300px">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cập Nhật</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal thêm sản phẩm -->
@@ -32,16 +124,37 @@
             <div class="modal-body">
                 <form id="addProductForm">
                     <div class="form-group">
-                        <label for="productId">ID Sản Phẩm</label>
-                        <input type="text" class="form-control" id="productId" required>
+                        <label for="productName">Tên Danh Mục</label>
+                        <input type="text" class="form-control" id="productCategory" name="productCategory" required>
                     </div>
                     <div class="form-group">
                         <label for="productName">Tên Sản Phẩm</label>
-                        <input type="text" class="form-control" id="productName" required>
+                        <input type="text" class="form-control" id="productName" name="productName" required>
                     </div>
                     <div class="form-group">
                         <label for="productPrice">Giá Sản Phẩm</label>
-                        <input type="number" class="form-control" id="productPrice" required>
+                        <input type="number" class="form-control" id="productPrice" name="productPrice" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productSaleTime">Thời gian khuyến mãi</label>
+                        <input type="text" class="form-control" id="productSaleTime" name="productSaleTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productRate">Số sao đánh giá</label>
+                        <input type="text" class="form-control" id="productRate" name="productRate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPercentSale">Phần trăm khuyến mãi</label>
+                        <input type="text" class="form-control" id="productPercentSale" name="productPercentSale" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDimension">Kích thước</label>
+                        <input type="text" class="form-control" id="productDimension" name="productDimension" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productImage">Hình Ảnh</label>
+                        <input type="file" id="productImage" name="productImage" accept=".jpg, .png" required onchange="previewImage(event)">
+                        <img id="imagePreview" class="preview" alt="Preview Hình Ảnh" width="450px" height="300px">
                     </div>
                     <button type="submit" class="btn btn-primary">Thêm</button>
                 </form>
@@ -49,4 +162,49 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        let btn_add = document.querySelectorAll('.addProductModal'); 
+        let btn_update = document.querySelectorAll('.btn.btn-warning'); 
+        let btn_delete = document.querySelectorAll('.btn.btn-danger'); 
+        btn_update.forEach((item, index) => {
+            item.onclick = () => {
+                document.getElementById('productId').value = item.getAttribute('product-id')
+                document.getElementById('productCategory').value = item.getAttribute('product-category')
+                document.getElementById('productName').value = item.getAttribute('product-name')
+                document.getElementById('productPrice').value = item.getAttribute('product-price')
+                document.getElementById('productSaleTime').value = item.getAttribute('product-saleTime')
+                document.getElementById('productRate').value = item.getAttribute('product-rate')
+                document.getElementById('productPercentSale').value = item.getAttribute('product-percentSale')
+                document.getElementById('productDimension').value = item.getAttribute('product-dimension')
+                document.getElementById('update-imagePreview').setAttribute("src", item.getAttribute('product-img'))
+
+                var form = document.getElementById('editProductForm');
+                form.action = '/update_product/' + item.getAttribute('product-id');
+            }
+        })
+        btn_delete.forEach((item, index) => {
+            item.onclick = () => {
+                let userId = item.getAttribute('data-id');
+                window.location.href = '/delete_product/' + userId;
+            }
+        })
+
+        btn_add.onclick = () =>{
+            console.log("Add")
+        }
+    });
+    function previewImage(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function() {
+            const img = document.getElementById('imagePreview');
+            img.src = reader.result;
+            img.style.display = 'block';
+        };
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 {% endblock %}

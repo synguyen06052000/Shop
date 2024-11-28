@@ -2,51 +2,96 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Danh Sách NGƯỜI DÙNG</h2>
-    <button class="btn btn-primary mb-3" data-toggle="modal" data-target="#addProductModal">Thêm Sản Người dùng</button>
+    <button class="btn btn-primary mb-3" data-toggle="modal">Thêm Người dùng</button>
     
     <table class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Tên Sản Phẩm</th>
-                <th>Giá</th>
-                <th>Hành Động</th>
+                <th>Tên Người dùng</th>
+                <th>Email</th>
+                <th>Ngày tạo</th>
+                <th>Hành động</th>
             </tr>
         </thead>
         <tbody id="productTableBody">
-            <!-- Dữ liệu sản phẩm sẽ được thêm vào đây -->
+            <!-- Dữ liệu -->
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.firstName + ' ' + user.lastName}}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.create_at }}</td>
+                    <td>
+                        <button class="btn btn-warning" data-target="#editUserModal" data-toggle="modal" data-id="{{user.id}}" data-firstName="{{user.firstName}}" data-lastName="{{user.lastName}}" data-email="{{user.email}}" >
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
 
-<!-- Modal thêm sản phẩm -->
-<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
+<!-- Modal chỉnh sửa thông tin sản phẩm -->
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addProductModalLabel">Thêm người dùng</h5>
+                <h5 class="modal-title" id="editUserModalLabel">Chỉnh Sửa Thông Tin Cá Nhân</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form id="addProductForm">
+                <form id="editUserForm" method="POST">
                     <div class="form-group">
-                        <label for="productId">ID Sản Phẩm</label>
-                        <input type="text" class="form-control" id="productId" required>
+                        <label for="userId">ID Người Dùng</label>
+                        <input type="text" class="form-control" name="userId" id="userId" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="productName">Tên Sản Phẩm</label>
-                        <input type="text" class="form-control" id="productName" required>
+                        <label for="userName">FirstName</label>
+                        <input type="text" class="form-control" name="firstName" id="firstName" required>
                     </div>
                     <div class="form-group">
-                        <label for="productPrice">Giá Sản Phẩm</label>
-                        <input type="number" class="form-control" id="productPrice" required>
+                        <label for="userName">LastName</label>
+                        <input type="text" class="form-control" name="lastName" id="lastName" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Thêm</button>
+                    <div class="form-group">
+                        <label for="userEmail">Email</label>
+                        <input type="email" class="form-control" name="email" id="email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cập Nhật</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        let btn_update = document.querySelectorAll('.btn.btn-warning'); 
+        btn_update.forEach((item, index) => {
+            item.onclick = () => {
+                document.getElementById('userId').value = item.getAttribute('data-id');
+                document.getElementById('firstName').value = item.getAttribute('data-firstName');
+                document.getElementById('lastName').value = item.getAttribute('data-lastName');
+                document.getElementById('email').value = item.getAttribute('data-email');
+
+                var form = document.getElementById('editUserForm');
+                form.action = '/update_info_user/' + item.getAttribute('data-id');
+            }
+        })
+        let btn_delete = document.querySelectorAll('.btn.btn-danger'); 
+        btn_delete.forEach((item, index) => {
+            item.onclick = () => {
+                let userId = item.getAttribute('data-id');
+                window.location.href = '/delete_user/' + userId;
+            }
+        })
+
+    });
+</script>
 {% endblock %}
